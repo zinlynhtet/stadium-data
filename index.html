@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Data Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Excel Data Generator</h1>
+            <p>Generate custom data and export to Excel instantly</p>
+        </div>
+
+        <div class="content">
+            <div class="info-box">
+                <h3>🏟️ Stadium Management Data Generator</h3>
+                <p>Generate realistic sales data for stadium events. Includes authentic ticket types, pricing tiers,
+                    merchandise sales, and concession data with age-based correlations. Perfect for stadium management
+                    analysis and Excel assignments.</p>
+            </div>
+
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="columns">Column Names (Pre-configured for Stadium Management):</label>
+                    <textarea id="columns" class="columns-input" readonly
+                        rows="3">Sale Date, Ticket Type, Ticket Price, Total Seats Sold, Remaining Seats, Total Ticket Sales, Jersey Sales, Team Scarf Sales, Snacks Sales, Soft Drink Sales, Alcohol Sales</textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="rowCount">Number of Match Days:</label>
+                    <input type="number" id="rowCount" value="30" min="1" max="365">
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn-generate" onclick="generateData()">
+                    🎲 Generate Data
+                </button>
+                <button class="btn-download" id="downloadBtn" onclick="downloadExcel()" disabled>
+                    📥 Download Excel
+                </button>
+            </div>
+
+            <div class="preview-section" id="previewSection" style="display: none;">
+                <h3>Data Preview (First 10 rows):</h3>
+                <!-- Wrapped table in scrollable container -->
+                <div class="table-scroll-container" id="tableContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
