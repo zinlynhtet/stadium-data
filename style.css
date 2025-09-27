@@ -8,16 +8,19 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
-    padding: 20px;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .container {
-    max-width: 800px;
-    margin: 0 auto;
+    width: 100%;
+    flex: 1;
     background: white;
-    border-radius: 15px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .header {
@@ -39,6 +42,7 @@ body {
 
 .content {
     padding: 40px;
+    flex: 1;
 }
 
 .input-section {
@@ -190,6 +194,15 @@ button {
     line-height: 1.5;
 }
 
+.footer {
+    background: #333;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    font-size: 14px;
+    margin-top: auto;
+}
+
 @media (max-width: 600px) {
     .button-group {
         flex-direction: column;
@@ -201,5 +214,10 @@ button {
 
     .content {
         padding: 20px;
+    }
+
+    .footer {
+        padding: 10px;
+        font-size: 12px;
     }
 }
