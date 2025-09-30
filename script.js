@@ -11,15 +11,14 @@ const stadiumCapacity = {
 // Stadium management specific data generators
 const dataGenerators = {
     saledate: () => {
-        // Generate dates for the current football season (August to May)
         const currentYear = new Date().getFullYear();
-        const seasonStart = new Date(currentYear, 7, 1); // August 1st
-        const seasonEnd = new Date(currentYear + 1, 4, 31); // May 31st
+        const seasonStart = new Date(currentYear, 7, 1);
+        const seasonEnd = new Date(currentYear + 1, 4, 31);
 
         const randomTime = seasonStart.getTime() + Math.random() * (seasonEnd.getTime() - seasonStart.getTime());
         const randomDate = new Date(randomTime);
 
-        return randomDate.toLocaleDateString('en-GB'); // UK date format
+        return randomDate.toLocaleDateString('en-GB');
     },
 
     ticketprice: (ticketType) => {
@@ -30,9 +29,8 @@ const dataGenerators = {
             'Kids': 35
         };
 
-        // Add demand/supply variation (±30% of base price)
         const basePrice = basePrices[ticketType];
-        const variation = (Math.random() - 0.5) * 0.6; // -30% to +30%
+        const variation = (Math.random() - 0.5) * 0.6;
         const finalPrice = Math.round(basePrice * (1 + variation));
 
         return `€${finalPrice}`;
@@ -40,7 +38,6 @@ const dataGenerators = {
 
     totalseatssold: (ticketType) => {
         const maxCapacity = stadiumCapacity[ticketType];
-        // Sell between 60% to 95% of capacity
         const soldPercentage = 0.6 + (Math.random() * 0.35);
         const seatsSold = Math.floor(maxCapacity * soldPercentage);
 
@@ -62,127 +59,143 @@ const dataGenerators = {
         return `€${totalSales.toLocaleString()}`;
     },
 
-    jerseysales: (ticketType) => {
-        // Realistic Liverpool FC jersey prices: Home £80, Away £85, Third £90, Retro £70
+    // Jersey sales with unit pricing
+    jerseyunitprice: () => {
         const jerseyPrices = [70, 75, 80, 85, 90];
-        const avgPrice = jerseyPrices[Math.floor(Math.random() * jerseyPrices.length)];
-
-        // Jersey sales vary by ticket type - premium customers buy more
-        let baseQuantity;
-        switch (ticketType) {
-            case 'VVIP': baseQuantity = 800; break;  // Higher purchasing power
-            case 'VIP': baseQuantity = 1200; break;  // Good purchasing power
-            case 'Standard': baseQuantity = 600; break; // Moderate purchasing
-            case 'Kids': baseQuantity = 200; break;  // Lower volume, parents buy
-        }
-
-        const quantity = Math.floor(baseQuantity + (Math.random() * baseQuantity * 0.5)); // ±50% variation
-        const totalSales = avgPrice * quantity;
-        return `€${totalSales.toLocaleString()}`;
+        const price = jerseyPrices[Math.floor(Math.random() * jerseyPrices.length)];
+        return `€${price}`;
     },
 
-    teamscarfsales: (ticketType) => {
-        // Real Anfield scarf prices: £12-15 (€14-17)
-        const scarf_price = 14 + Math.floor(Math.random() * 4); // €14-17
+    jerseyssold: (ticketType) => {
+        let baseQuantity;
+        switch (ticketType) {
+            case 'VVIP': baseQuantity = 800; break;
+            case 'VIP': baseQuantity = 1200; break;
+            case 'Standard': baseQuantity = 600; break;
+            case 'Kids': baseQuantity = 200; break;
+        }
 
-        // Scarf sales vary by ticket type and are popular souvenirs
+        const quantity = Math.floor(baseQuantity + (Math.random() * baseQuantity * 0.5));
+        return quantity.toLocaleString();
+    },
+
+    jerseysales: (unitPrice, quantitySold) => {
+        const price = parseInt(unitPrice.replace('€', ''));
+        const quantity = parseInt(quantitySold.replace(/,/g, ''));
+        const total = price * quantity;
+        return `€${total.toLocaleString()}`;
+    },
+
+    // Scarf sales with unit pricing
+    scarfunitprice: () => {
+        const price = 14 + Math.floor(Math.random() * 4); // €14-17
+        return `€${price}`;
+    },
+
+    scarfssold: (ticketType) => {
         let baseQuantity;
         switch (ticketType) {
             case 'VVIP': baseQuantity = 400; break;
             case 'VIP': baseQuantity = 800; break;
-            case 'Standard': baseQuantity = 1200; break; // Most popular with standard fans
+            case 'Standard': baseQuantity = 1200; break;
             case 'Kids': baseQuantity = 300; break;
         }
 
-        const quantity = Math.floor(baseQuantity + (Math.random() * baseQuantity * 0.6)); // ±60% variation
-        const totalSales = scarf_price * quantity;
-        return `€${totalSales.toLocaleString()}`;
+        const quantity = Math.floor(baseQuantity + (Math.random() * baseQuantity * 0.6));
+        return quantity.toLocaleString();
     },
 
-    snackssales: (ticketType) => {
-        // Real Anfield concession prices: Pie £3.40, Chips £3.50, Burger £6.00
-        const snacks = [
-            { item: 'Pie', price: 3.40 },
-            { item: 'Chips', price: 3.50 },
-            { item: 'Burger', price: 6.00 },
-            { item: 'Hot Dog', price: 5.00 },
-            { item: 'Sandwich', price: 5.50 },
-            { item: 'Crisps', price: 2.50 }
-        ];
-
-        // Snack consumption varies by ticket type
-        let baseQuantity;
-        switch (ticketType) {
-            case 'VVIP': baseQuantity = 1500; break; // Premium hospitality includes food
-            case 'VIP': baseQuantity = 2500; break;
-            case 'Standard': baseQuantity = 4000; break; // Highest volume
-            case 'Kids': baseQuantity = 800; break;  // Smaller portions, less spending
-        }
-
-        const quantity = Math.floor(baseQuantity + (Math.random() * baseQuantity * 0.4));
-        let total = 0;
-        for (let i = 0; i < quantity; i++) {
-            const snack = snacks[Math.floor(Math.random() * snacks.length)];
-            total += snack.price;
-        }
+    teamscarfsales: (unitPrice, quantitySold) => {
+        const price = parseInt(unitPrice.replace('€', ''));
+        const quantity = parseInt(quantitySold.replace(/,/g, ''));
+        const total = price * quantity;
         return `€${total.toLocaleString()}`;
     },
 
-    softdrinksales: (ticketType) => {
-        // Real stadium beverage prices: Tea £2.50, Soft drinks £3.50
-        const drinks = [
-            { item: 'Coca-Cola', price: 3.50 },
-            { item: 'Water', price: 2.50 },
-            { item: 'Coffee', price: 3.00 },
-            { item: 'Tea', price: 2.50 },
-            { item: 'Orange Juice', price: 3.20 }
-        ];
+    // Snacks sales with unit pricing
+    snackunitprice: () => {
+        const prices = [2.50, 3.40, 3.50, 5.00, 5.50, 6.00];
+        const price = prices[Math.floor(Math.random() * prices.length)];
+        return `€${price.toFixed(2)}`;
+    },
 
-        // Beverage consumption is high across all ticket types
+    snackssold: (ticketType) => {
+        let baseQuantity;
+        switch (ticketType) {
+            case 'VVIP': baseQuantity = 1500; break;
+            case 'VIP': baseQuantity = 2500; break;
+            case 'Standard': baseQuantity = 4000; break;
+            case 'Kids': baseQuantity = 800; break;
+        }
+
+        const quantity = Math.floor(baseQuantity + (Math.random() * baseQuantity * 0.4));
+        return quantity.toLocaleString();
+    },
+
+    snackssales: (unitPrice, quantitySold) => {
+        const price = parseFloat(unitPrice.replace('€', ''));
+        const quantity = parseInt(quantitySold.replace(/,/g, ''));
+        const total = price * quantity;
+        return `€${total.toLocaleString()}`;
+    },
+
+    // Soft drink sales with unit pricing
+    softdrinkunitprice: () => {
+        const prices = [2.50, 3.00, 3.20, 3.50];
+        const price = prices[Math.floor(Math.random() * prices.length)];
+        return `€${price.toFixed(2)}`;
+    },
+
+    softdrinkssold: (ticketType) => {
         let baseQuantity;
         switch (ticketType) {
             case 'VVIP': baseQuantity = 2000; break;
             case 'VIP': baseQuantity = 3500; break;
-            case 'Standard': baseQuantity = 5000; break; // Highest volume
+            case 'Standard': baseQuantity = 5000; break;
             case 'Kids': baseQuantity = 1000; break;
         }
 
         const quantity = Math.floor(baseQuantity + (Math.random() * baseQuantity * 0.3));
-        let total = 0;
-        for (let i = 0; i < quantity; i++) {
-            const drink = drinks[Math.floor(Math.random() * drinks.length)];
-            total += drink.price;
-        }
+        return quantity.toLocaleString();
+    },
+
+    softdrinksales: (unitPrice, quantitySold) => {
+        const price = parseFloat(unitPrice.replace('€', ''));
+        const quantity = parseInt(quantitySold.replace(/,/g, ''));
+        const total = price * quantity;
         return `€${total.toLocaleString()}`;
     },
 
-    alcoholsales: (ticketType) => {
+    // Alcohol sales with unit pricing
+    alcoholunitprice: (ticketType) => {
         if (ticketType === 'Kids') {
-            return '€0';
+            return '€0.00';
+        }
+        const prices = [2.00, 3.80, 4.50, 6.00];
+        const price = prices[Math.floor(Math.random() * prices.length)];
+        return `€${price.toFixed(2)}`;
+    },
+
+    alcoholsold: (ticketType) => {
+        if (ticketType === 'Kids') {
+            return '0';
         }
 
-        // Real Anfield alcohol prices: Pint £3.30 (€3.80)
-        const drinks = [
-            { item: 'Pint of Beer', price: 3.80 }, // Real Anfield price
-            { item: 'Half Pint', price: 2.00 },
-            { item: 'Wine', price: 6.00 },
-            { item: 'Spirits', price: 4.50 }
-        ];
-
-        // Alcohol sales vary significantly by ticket type
         let baseQuantity;
         switch (ticketType) {
-            case 'VVIP': baseQuantity = 1200; break; // Premium hospitality
+            case 'VVIP': baseQuantity = 1200; break;
             case 'VIP': baseQuantity = 2000; break;
-            case 'Standard': baseQuantity = 2800; break; // Highest volume
+            case 'Standard': baseQuantity = 2800; break;
         }
 
         const quantity = Math.floor(baseQuantity + (Math.random() * baseQuantity * 0.5));
-        let total = 0;
-        for (let i = 0; i < quantity; i++) {
-            const drink = drinks[Math.floor(Math.random() * drinks.length)];
-            total += drink.price;
-        }
+        return quantity.toLocaleString();
+    },
+
+    alcoholsales: (unitPrice, quantitySold) => {
+        const price = parseFloat(unitPrice.replace('€', ''));
+        const quantity = parseInt(quantitySold.replace(/,/g, ''));
+        const total = price * quantity;
         return `€${total.toLocaleString()}`;
     }
 };
@@ -197,11 +210,26 @@ function detectColumnType(columnName) {
     if (name.includes('total') && name.includes('seats')) return 'totalseatssold';
     if (name.includes('remaining') && name.includes('seats')) return 'remainingseats';
     if (name.includes('total') && name.includes('ticket')) return 'totalticketssales';
-    if (name.includes('jersey')) return 'jerseysales';
-    if (name.includes('scarf')) return 'teamscarfsales';
-    if (name.includes('snacks')) return 'snackssales';
-    if (name.includes('soft') && name.includes('drink')) return 'softdrinksales';
-    if (name.includes('alcohol')) return 'alcoholsales';
+
+    if (name.includes('jersey') && name.includes('unit')) return 'jerseyunitprice';
+    if (name.includes('jerseys') && name.includes('sold')) return 'jerseyssold';
+    if (name.includes('jersey') && name.includes('sales')) return 'jerseysales';
+
+    if (name.includes('scarf') && name.includes('unit')) return 'scarfunitprice';
+    if (name.includes('scarfs') && name.includes('sold')) return 'scarfssold';
+    if (name.includes('scarf') && name.includes('sales')) return 'teamscarfsales';
+
+    if (name.includes('snack') && name.includes('unit')) return 'snackunitprice';
+    if (name.includes('snacks') && name.includes('sold')) return 'snackssold';
+    if (name.includes('snacks') && name.includes('sales')) return 'snackssales';
+
+    if (name.includes('softdrink') && name.includes('unit')) return 'softdrinkunitprice';
+    if (name.includes('softdrinks') && name.includes('sold')) return 'softdrinkssold';
+    if (name.includes('softdrink') && name.includes('sales')) return 'softdrinksales';
+
+    if (name.includes('alcohol') && name.includes('unit')) return 'alcoholunitprice';
+    if (name.includes('alcohol') && name.includes('sold')) return 'alcoholsold';
+    if (name.includes('alcohol') && name.includes('sales')) return 'alcoholsales';
 
     return 'default';
 }
@@ -225,26 +253,40 @@ function generateData() {
     generatedData = [];
     const ticketTypes = ['VVIP', 'VIP', 'Standard', 'Kids'];
 
-    // Generate unique dates for match days
     const dates = [];
     for (let i = 0; i < matchDays; i++) {
         dates.push(dataGenerators.saledate());
     }
 
-    // Sort dates in ascending order
     dates.sort((a, b) => {
         const dateA = new Date(a.split('/').reverse().join('-'));
         const dateB = new Date(b.split('/').reverse().join('-'));
         return dateA - dateB;
     });
 
-    // For each date, create exactly 4 rows (one for each ticket type)
     dates.forEach(date => {
         ticketTypes.forEach(ticketType => {
             const row = {};
 
+            // Generate ticket data
             const ticketPrice = dataGenerators.ticketprice(ticketType);
             const seatsSold = dataGenerators.totalseatssold(ticketType);
+
+            // Generate unit prices and quantities for merchandise and concessions
+            const jerseyUnitPrice = dataGenerators.jerseyunitprice();
+            const jerseysSold = dataGenerators.jerseyssold(ticketType);
+
+            const scarfUnitPrice = dataGenerators.scarfunitprice();
+            const scarfsSold = dataGenerators.scarfssold(ticketType);
+
+            const snackUnitPrice = dataGenerators.snackunitprice();
+            const snacksSold = dataGenerators.snackssold(ticketType);
+
+            const softDrinkUnitPrice = dataGenerators.softdrinkunitprice();
+            const softDrinksSold = dataGenerators.softdrinkssold(ticketType);
+
+            const alcoholUnitPrice = dataGenerators.alcoholunitprice(ticketType);
+            const alcoholSold = dataGenerators.alcoholsold(ticketType);
 
             columns.forEach(column => {
                 const columnType = detectColumnType(column);
@@ -261,16 +303,46 @@ function generateData() {
                     row[column] = dataGenerators.remainingseats(ticketType, seatsSold);
                 } else if (columnType === 'totalticketssales') {
                     row[column] = dataGenerators.totalticketssales(ticketType, ticketPrice, seatsSold);
+                }
+                // Jersey columns
+                else if (columnType === 'jerseyunitprice') {
+                    row[column] = jerseyUnitPrice;
+                } else if (columnType === 'jerseyssold') {
+                    row[column] = jerseysSold;
                 } else if (columnType === 'jerseysales') {
-                    row[column] = dataGenerators.jerseysales(ticketType);
+                    row[column] = dataGenerators.jerseysales(jerseyUnitPrice, jerseysSold);
+                }
+                // Scarf columns
+                else if (columnType === 'scarfunitprice') {
+                    row[column] = scarfUnitPrice;
+                } else if (columnType === 'scarfssold') {
+                    row[column] = scarfsSold;
                 } else if (columnType === 'teamscarfsales') {
-                    row[column] = dataGenerators.teamscarfsales(ticketType);
+                    row[column] = dataGenerators.teamscarfsales(scarfUnitPrice, scarfsSold);
+                }
+                // Snack columns
+                else if (columnType === 'snackunitprice') {
+                    row[column] = snackUnitPrice;
+                } else if (columnType === 'snackssold') {
+                    row[column] = snacksSold;
                 } else if (columnType === 'snackssales') {
-                    row[column] = dataGenerators.snackssales(ticketType);
+                    row[column] = dataGenerators.snackssales(snackUnitPrice, snacksSold);
+                }
+                // Soft drink columns
+                else if (columnType === 'softdrinkunitprice') {
+                    row[column] = softDrinkUnitPrice;
+                } else if (columnType === 'softdrinkssold') {
+                    row[column] = softDrinksSold;
                 } else if (columnType === 'softdrinksales') {
-                    row[column] = dataGenerators.softdrinksales(ticketType);
+                    row[column] = dataGenerators.softdrinksales(softDrinkUnitPrice, softDrinksSold);
+                }
+                // Alcohol columns
+                else if (columnType === 'alcoholunitprice') {
+                    row[column] = alcoholUnitPrice;
+                } else if (columnType === 'alcoholsold') {
+                    row[column] = alcoholSold;
                 } else if (columnType === 'alcoholsales') {
-                    row[column] = dataGenerators.alcoholsales(ticketType);
+                    row[column] = dataGenerators.alcoholsales(alcoholUnitPrice, alcoholSold);
                 }
             });
 
@@ -278,10 +350,7 @@ function generateData() {
         });
     });
 
-    // Show preview
     displayPreview(columns);
-
-    // Enable download button
     document.getElementById('downloadBtn').disabled = false;
 }
 
